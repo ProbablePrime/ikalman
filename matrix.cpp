@@ -13,10 +13,12 @@ Matrix alloc_matrix(int rows, int cols) {
   m.rows = rows;
   m.cols = cols;
   m.data = (double**) malloc(sizeof(double*) * m.rows);
-  for (int i = 0; i < m.rows; ++i) {
+  int i;
+  for (i = 0; i < m.rows; ++i) {
     m.data[i] = (double*) malloc(sizeof(double) * m.cols);
     assert(m.data[i]);
-    for (int j = 0; j < m.cols; ++j) {
+    int j;
+    for (j = 0; j < m.cols; ++j) {
       m.data[i][j] = 0.0;
     }
   }
@@ -25,7 +27,8 @@ Matrix alloc_matrix(int rows, int cols) {
 
 void free_matrix(Matrix m) {
   assert(m.data != NULL);
-  for (int i = 0; i < m.rows; ++i) {
+  int i;
+  for (i = 0; i < m.rows; ++i) {
     free(m.data[i]);
   }
   free(m.data);
@@ -34,9 +37,10 @@ void free_matrix(Matrix m) {
 void set_matrix(Matrix m, ...) {
   va_list ap;
   va_start(ap, m);
-  
-  for (int i = 0; i < m.rows; ++i) {
-    for (int j = 0; j < m.cols; ++j) {
+  int i;
+  for (i = 0; i < m.rows; ++i) {
+    int j;
+    for (j = 0; j < m.cols; ++j) {
       m.data[i][j] = va_arg(ap, double);
     }
   }
@@ -46,8 +50,10 @@ void set_matrix(Matrix m, ...) {
 
 void set_identity_matrix(Matrix m) {
   assert(m.rows == m.cols);
-  for (int i = 0; i < m.rows; ++i) {
-    for (int j = 0; j < m.cols; ++j) {
+  int i;
+  for (i = 0; i < m.rows; ++i) {
+    int j;
+    for (j = 0; j < m.cols; ++j) {
       if (i == j) {
 	m.data[i][j] = 1.0;
       } else {
@@ -60,16 +66,20 @@ void set_identity_matrix(Matrix m) {
 void copy_matrix(Matrix source, Matrix destination) {
   assert(source.rows == destination.rows);
   assert(source.cols == destination.cols);
-  for (int i = 0; i < source.rows; ++i) {
-    for (int j = 0; j < source.cols; ++j) {
+  int i;
+  for (i = 0; i < source.rows; ++i) {
+    int j;
+    for (j = 0; j < source.cols; ++j) {
       destination.data[i][j] = source.data[i][j];
     }
   }
 }
 
 void print_matrix(Matrix m) {
-  for (int i = 0; i < m.rows; ++i) {
-    for (int j = 0; j < m.cols; ++j) {
+  int i;
+  for (i = 0; i < m.rows; ++i) {
+    int j;
+    for (j = 0; j < m.cols; ++j) {
       if (j > 0) {
 	printf(" ");
       }
@@ -84,8 +94,10 @@ void add_matrix(Matrix a, Matrix b, Matrix c) {
   assert(a.rows == c.rows);
   assert(a.cols == b.cols);
   assert(a.cols == c.cols);
-  for (int i = 0; i < a.rows; ++i) {
-    for (int j = 0; j < a.cols; ++j) {
+  int i;
+  for (i = 0; i < a.rows; ++i) {
+    int j;
+    for (j = 0; j < a.cols; ++j) {
       c.data[i][j] = a.data[i][j] + b.data[i][j];
     }
   }
@@ -96,8 +108,10 @@ void subtract_matrix(Matrix a, Matrix b, Matrix c) {
   assert(a.rows == c.rows);
   assert(a.cols == b.cols);
   assert(a.cols == c.cols);
-  for (int i = 0; i < a.rows; ++i) {
-    for (int j = 0; j < a.cols; ++j) {
+  int i;
+  for (i = 0; i < a.rows; ++i) {
+    int j;
+    for (j = 0; j < a.cols; ++j) {
       c.data[i][j] = a.data[i][j] - b.data[i][j];
     }
   }
@@ -105,8 +119,10 @@ void subtract_matrix(Matrix a, Matrix b, Matrix c) {
 
 void subtract_from_identity_matrix(Matrix a) {
   assert(a.rows == a.cols);
-  for (int i = 0; i < a.rows; ++i) {
-    for (int j = 0; j < a.cols; ++j) {
+  int i;
+  for (i = 0; i < a.rows; ++i) {
+    int j;
+    for (j = 0; j < a.cols; ++j) {
       if (i == j) {
 	a.data[i][j] = 1.0 - a.data[i][j];
       } else {
@@ -120,12 +136,15 @@ void multiply_matrix(Matrix a, Matrix b, Matrix c) {
   assert(a.cols == b.rows);
   assert(a.rows == c.rows);
   assert(b.cols == c.cols);
-  for (int i = 0; i < c.rows; ++i) {
-    for (int j = 0; j < c.cols; ++j) {
+  int i; 
+  for ( i = 0; i < c.rows; ++i) {
+    int j;
+    for (j = 0; j < c.cols; ++j) {
       /* Calculate element c.data[i][j] via a dot product of one row of a
 	 with one column of b */
       c.data[i][j] = 0.0;
-      for (int k = 0; k < a.cols; ++k) {
+      int k;
+      for (k = 0; k < a.cols; ++k) {
 	c.data[i][j] += a.data[i][k] * b.data[k][j];
       }
     }
@@ -138,12 +157,15 @@ void multiply_by_transpose_matrix(Matrix a, Matrix b, Matrix c) {
   assert(a.cols == b.cols);
   assert(a.rows == c.rows);
   assert(b.rows == c.cols);
-  for (int i = 0; i < c.rows; ++i) {
-    for (int j = 0; j < c.cols; ++j) {
+  int i;
+  for (i = 0; i < c.rows; ++i) {
+    int j;
+    for (j = 0; j < c.cols; ++j) {
       /* Calculate element c.data[i][j] via a dot product of one row of a
 	 with one row of b */
       c.data[i][j] = 0.0;
-      for (int k = 0; k < a.cols; ++k) {
+      int k;
+      for (k = 0; k < a.cols; ++k) {
 	c.data[i][j] += a.data[i][k] * b.data[j][k];
       }
     }
@@ -153,8 +175,10 @@ void multiply_by_transpose_matrix(Matrix a, Matrix b, Matrix c) {
 void transpose_matrix(Matrix input, Matrix output) {
   assert(input.rows == output.cols);
   assert(input.cols == output.rows);
-  for (int i = 0; i < input.rows; ++i) {
-    for (int j = 0; j < input.cols; ++j) {
+  int i;
+  for (i = 0; i < input.rows; ++i) {
+    int j;
+    for (j = 0; j < input.cols; ++j) {
       output.data[j][i] = input.data[i][j];
     }
   }
@@ -163,8 +187,10 @@ void transpose_matrix(Matrix input, Matrix output) {
 int equal_matrix(Matrix a, Matrix b, double tolerance) {
   assert(a.rows == b.rows);
   assert(a.cols == b.cols);
-  for (int i = 0; i < a.rows; ++i) {
-    for (int j = 0; j < a.cols; ++j) {
+  int i;
+  for (i = 0; i < a.rows; ++i) {
+    int j;
+    for (j = 0; j < a.cols; ++j) {
       if (abs(a.data[i][j] - b.data[i][j]) > tolerance) {
 	return 0;
       }
@@ -175,8 +201,10 @@ int equal_matrix(Matrix a, Matrix b, double tolerance) {
 
 void scale_matrix(Matrix m, double scalar) {
   assert(scalar != 0.0);
-  for (int i = 0; i < m.rows; ++i) {
-    for (int j = 0; j < m.cols; ++j) {
+  int i;
+  for (i = 0; i < m.rows; ++i) {
+    int j;
+    for (j = 0; j < m.cols; ++j) {
       m.data[i][j] *= scalar;
     }
   }
@@ -191,7 +219,8 @@ void swap_rows(Matrix m, int r1, int r2) {
 
 void scale_row(Matrix m, int r, double scalar) {
   assert(scalar != 0.0);
-  for (int i = 0; i < m.cols; ++i) {
+  int i;
+  for (i = 0; i < m.cols; ++i) {
     m.data[r][i] *= scalar;
   }
 }
@@ -199,7 +228,8 @@ void scale_row(Matrix m, int r, double scalar) {
 /* Add scalar * row r2 to row r1. */
 void shear_row(Matrix m, int r1, int r2, double scalar) {
   assert(r1 != r2);
-  for (int i = 0; i < m.cols; ++i) {
+  int i;
+  for (i = 0; i < m.cols; ++i) {
     m.data[r1][i] += scalar * m.data[r2][i];
   }
 }
@@ -225,7 +255,8 @@ int destructive_invert_matrix(Matrix input, Matrix output) {
   /* Convert input to the identity matrix via elementary row operations.
      The ith pass through this loop turns the element at i,i to a 1
      and turns all other elements in column i to a 0. */
-  for (int i = 0; i < input.rows; ++i) {
+  int i;
+  for (i = 0; i < input.rows; ++i) {
     if (input.data[i][i] == 0.0) {
       /* We must swap rows to get a nonzero diagonal element. */
       int r;
@@ -250,7 +281,8 @@ int destructive_invert_matrix(Matrix input, Matrix output) {
     scale_row(output, i, scalar);
 
     /* Zero out the other elements in this column. */
-    for (int j = 0; j < input.rows; ++j) {
+    int j;
+    for (j = 0; j < input.rows; ++j) {
       if (i == j) {
 	continue;
       }

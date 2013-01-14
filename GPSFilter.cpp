@@ -2,18 +2,19 @@
 
 #include <assert.h>
 #include <math.h>
-#include "gps.h"
+#include "GPSFilter.h"
 
 static const double PI = 3.14159265;
 static const double EARTH_RADIUS_IN_MILES = 3963.1676;
 
-KalmanFilter alloc_filter_velocity2d(double noise) {
+GPSFilter::GPSFilter(double noise){
+  //KalmanFilter alloc_filter_velocity2d(double noise) {
   /* The state model has four dimensions:
      x, y, x', y'
      Each time step we can only observe position, not velocity, so the
      observation vector has only two dimensions.
   */
-  KalmanFilter f = alloc_filter(4, 2);
+  f = alloc_filter(4, 2);
 
   /* Assuming the axes are rectilinear does not work well at the
      poles, but it has the bonus that we don't need to convert between
@@ -22,7 +23,7 @@ KalmanFilter alloc_filter_velocity2d(double noise) {
    */
   double v2p = 0.001;
   set_identity_matrix(f.state_transition);
-  set_seconds_per_timestep(f, 1.0);
+  set_seconds_per_timestep(1.0);
 	     
   /* We observe (x, y) in each time step */
   set_matrix(f.observation_model,
@@ -48,7 +49,7 @@ KalmanFilter alloc_filter_velocity2d(double noise) {
   double trillion = 1000.0 * 1000.0 * 1000.0 * 1000.0;
   scale_matrix(f.estimate_covariance, trillion);
 
-  return f;
+  //return f;
 }
 
 
@@ -61,8 +62,7 @@ KalmanFilter alloc_filter_velocity2d(double noise) {
    Thus a typical position is hundreds of thousands of units.
    A typical velocity is maybe ten.
 */
-void set_seconds_per_timestep(KalmanFilter f,
-			      double seconds_per_timestep) {
+void GPSFilter::set_seconds_per_timestep(double seconds_per_timestep) {
   /* unit_scaler accounts for the relation between position and
      velocity units */
   double unit_scaler = 0.001;
@@ -70,14 +70,14 @@ void set_seconds_per_timestep(KalmanFilter f,
   f.state_transition.data[1][3] = unit_scaler * seconds_per_timestep;
 }
 
-void update_velocity2d(KalmanFilter f, double lat, double lon,
+void GPSFilter::update_velocity2d(double lat, double lon,
 		       double seconds_since_last_timestep) {
-  set_seconds_per_timestep(f, seconds_since_last_timestep);
+  set_seconds_per_timestep(seconds_since_last_timestep);
   set_matrix(f.observation, lat * 1000.0, lon * 1000.0);
   update(f);
 }
 
-int read_lat_long(FILE* file, double* lat, double* lon) {
+int GPSFilter::read_lat_long(FILE* file, double* lat, double* lon) {
   while (1) {
     /* If we find a lat long pair, we're done */
     if (2 == fscanf(file, "%lf,%lf", lat, lon)) {
@@ -95,13 +95,13 @@ int read_lat_long(FILE* file, double* lat, double* lon) {
 }
 
 
-void get_lat_long(KalmanFilter f, double* lat, double* lon) {
+void GPSFilter::get_lat_long(double* lat, double* lon) {
   *lat = f.state_estimate.data[0][0] / 1000.0;
   *lon = f.state_estimate.data[1][0] / 1000.0;
 }
 
 
-void get_velocity(KalmanFilter f, double* delta_lat, double* delta_lon) {
+void GPSFilter::get_velocity(double* delta_lat, double* delta_lon) {
   *delta_lat = f.state_estimate.data[2][0] / (1000.0 * 1000.0);
   *delta_lon = f.state_estimate.data[3][0] / (1000.0 * 1000.0);
 }
@@ -109,10 +109,10 @@ void get_velocity(KalmanFilter f, double* delta_lat, double* delta_lon) {
 /* See
    http://www.movable-type.co.uk/scripts/latlong.html
    for formulas */
-double get_bearing(KalmanFilter f) {
+double GPSFilter::get_bearing() {
   double lat, lon, delta_lat, delta_lon, x, y;
-  get_lat_long(f, &lat, &lon);
-  get_velocity(f, &delta_lat, &delta_lon);
+  get_lat_long(&lat, &lon);
+  get_velocity(&delta_lat, &delta_lon);
 
   /* Convert to radians */
   double to_radians = PI / 180.0;
@@ -139,7 +139,7 @@ double get_bearing(KalmanFilter f) {
   return bearing;
 }
 
-double calculate_mph(double lat, double lon,
+double GPSFilter::calculate_mph(double lat, double lon,
 		     double delta_lat, double delta_lon) {
   /* First, let's calculate a unit-independent measurement - the radii
      of the earth traveled in each second. (Presumably this will be
@@ -167,10 +167,10 @@ double calculate_mph(double lat, double lon,
   return miles_per_hour;
 }
 
-double get_mph(KalmanFilter f) {
+double GPSFilter::get_mph() {
   double lat, lon, delta_lat, delta_lon;
-  get_lat_long(f, &lat, &lon);
-  get_velocity(f, &delta_lat, &delta_lon);
+  get_lat_long(&lat, &lon);
+  get_velocity(&delta_lat, &delta_lon);
   return calculate_mph(lat, lon, delta_lat, delta_lon);
 }
 

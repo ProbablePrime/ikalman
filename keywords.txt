@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map for ikalman
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+KalmanFilter KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+set_seconds_per_timestep	KEYWORD2
+alloc_filter_velocity2d	KEYWORD2
+update_velocity2d	KEYWORD2
+read_lat_long	KEYWORD2
+get_lat_long	KEYWORD2
+get_velocity	KEYWORD2
+get_bearing	KEYWORD2
+calculate_mph	KEYWORD2
+get_mph	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
