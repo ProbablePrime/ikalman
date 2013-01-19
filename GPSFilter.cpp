@@ -173,4 +173,7 @@ double GPSFilter::get_mph() {
   get_velocity(&delta_lat, &delta_lon);
   return calculate_mph(lat, lon, delta_lat, delta_lon);
 }
+GPSFilter::~GPSFilter(){
+  free_filter(f);
+}
 

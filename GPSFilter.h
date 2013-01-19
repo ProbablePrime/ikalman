@@ -28,6 +28,7 @@ class GPSFilter
   //KalmanFilter alloc_filter_velocity2d(double noise);
   public:
     GPSFilter(double noise);
+    ~GPSFilter();
 
     /* Set the seconds per timestep in the velocity2d model. */
     void set_seconds_per_timestep(double seconds_per_timestep);
