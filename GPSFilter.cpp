@@ -76,23 +76,23 @@ void GPSFilter::update_velocity2d(double lat, double lon,
   set_matrix(f.observation, lat * 1000.0, lon * 1000.0);
   update(f);
 }
-
-int GPSFilter::read_lat_long(FILE* file, double* lat, double* lon) {
+//We dont need file stuff its also unlikely that they will work within this context
+/*int GPSFilter::read_lat_long(FILE* file, double* lat, double* lon) {
   while (1) {
-    /* If we find a lat long pair, we're done */
+    //If we find a lat long pair, we're done 
     if (2 == fscanf(file, "%lf,%lf", lat, lon)) {
       return 1;
     }
 
-    /* Advance to the next line */
+    // Advance to the next line 
     int ch;
     while ((ch = getc(file)) != '\n') {
       if (EOF == ch) {
-	return 0;
+	     return 0;
       }
     }
   }
-}
+}*/
 
 
 void GPSFilter::get_lat_long(double* lat, double* lon) {
@@ -173,7 +173,7 @@ double GPSFilter::get_mph() {
   get_velocity(&delta_lat, &delta_lon);
   return calculate_mph(lat, lon, delta_lat, delta_lon);
 }
-void GPSFilter::~GPSFilter(){
+GPSFilter::~GPSFilter(){
   free_filter(f);
 }
 
