@@ -1,3 +1,9 @@
+This Fork attempts to create an Arduino compatible edition of the original repo.
+
+It's quite memory intesive so I only managed to get it working on an Arduino Mega(Best available at the time).
+
+Please be careful with it. 
+
 See gps.h for usage.
 
 ---------
